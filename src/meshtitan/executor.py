@@ -14,7 +14,7 @@ from .backends import BackendError, build_invocation
 from .config import RuntimeConfig
 from .gpu import GPUInfo, get_configured_gpu
 from .models import JobRecord, JobRequest, JobStatus, TERMINAL_STATUSES
-from .store import JobStore, JobStoreError
+from .store import JobStore
 from .telemetry import TelemetrySampler
 
 
@@ -116,7 +116,10 @@ class JobManager:
         cancel_event = self._cancel.setdefault(job_id, threading.Event())
         started = time.monotonic()
 
-        with stdout_path.open("w", encoding="utf-8") as stdout, stderr_path.open("w", encoding="utf-8") as stderr:
+        with (
+            stdout_path.open("w", encoding="utf-8") as stdout,
+            stderr_path.open("w", encoding="utf-8") as stderr,
+        ):
             process = subprocess.Popen(
                 invocation.command,
                 cwd=invocation.cwd,
@@ -161,7 +164,11 @@ class JobManager:
             return
 
         if not invocation.output_path.is_file() or invocation.output_path.stat().st_size == 0:
-            self.jobs.mark_terminal(job_id, JobStatus.failed, error="backend reported success but mesh artifact is missing")
+            self.jobs.mark_terminal(
+                job_id,
+                JobStatus.failed,
+                error="backend reported success but mesh artifact is missing",
+            )
             return
 
         runner_result: dict[str, Any] = {}

@@ -23,7 +23,9 @@ class AssetStore:
     def add(self, data: bytes, original_name: str, media_type: str | None = None) -> AssetRecord:
         suffix = Path(original_name).suffix.lower()
         if suffix not in _ALLOWED_SUFFIXES:
-            raise AssetError(f"unsupported image extension {suffix!r}; expected one of {sorted(_ALLOWED_SUFFIXES)}")
+            raise AssetError(
+                f"unsupported image extension {suffix!r}; expected one of {sorted(_ALLOWED_SUFFIXES)}"
+            )
         digest = hashlib.sha256(data).hexdigest()
         directory = self.root / digest
         directory.mkdir(parents=True, exist_ok=True)
