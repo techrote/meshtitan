@@ -1,0 +1,28 @@
+[runtime]
+data_dir = "./var"
+host = "127.0.0.1"
+port = 8088
+max_upload_mib = 32
+
+[gpu]
+# Prefer a stable GPU UUID after first qualification; index 0 is convenient for bootstrap.
+selector = "0"
+expected_name_contains = "TITAN RTX"
+min_vram_mib = 22000
+min_compute_capability = "7.5"
+telemetry_interval_s = 1.0
+
+[backends.hunyuan_shape]
+enabled = true
+python = ".venv-hunyuan"
+repo = ".vendor/Hunyuan3D-2.1"
+commit = "82920d643c0dc2f7bfd7255f45f62d386edfe60c"
+model_path = "tencent/Hunyuan3D-2.1"
+subfolder = "hunyuan3d-dit-v2-1"
+
+[backends.triposr]
+enabled = true
+python = ".venv-triposr"
+repo = ".vendor/TripoSR"
+commit = "107cefdc244c39106fa830359024f6a2f1c78871"
+model = "stabilityai/TripoSR"

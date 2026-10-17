@@ -1,0 +1,10 @@
+.venv*/
+.vendor/
+var/
+meshtitan.toml
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+Thumbs.db
