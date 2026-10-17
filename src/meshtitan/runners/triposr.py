@@ -63,7 +63,11 @@ def main() -> int:
     inference_s = time.perf_counter() - t1
 
     t2 = time.perf_counter()
-    meshes = model.extract_mesh(scene_codes, True, resolution=args.mc_resolution)
+    meshes = model.extract_mesh(
+        scene_codes,
+        has_vertex_color=False,
+        resolution=args.mc_resolution,
+    )
     extraction_s = time.perf_counter() - t2
     if not meshes:
         raise RuntimeError("TripoSR returned no mesh")
@@ -96,6 +100,7 @@ def main() -> int:
             "mc_resolution": args.mc_resolution,
             "remove_background": args.remove_background,
             "foreground_ratio": args.foreground_ratio,
+            "vertex_colors": False,
         },
     }
     Path(args.result_json).write_text(json.dumps(result, indent=2, sort_keys=True), encoding="utf-8")
