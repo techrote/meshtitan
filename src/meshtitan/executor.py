@@ -13,7 +13,7 @@ from .assets import AssetStore
 from .backends import BackendError, build_invocation
 from .config import RuntimeConfig
 from .gpu import GPUInfo, get_configured_gpu
-from .models import JobRecord, JobRequest, JobStatus, TERMINAL_STATUSES
+from .models import TERMINAL_STATUSES, JobRecord, JobRequest, JobStatus
 from .store import JobStore
 from .telemetry import TelemetrySampler
 

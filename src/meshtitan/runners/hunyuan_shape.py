@@ -29,9 +29,9 @@ def main() -> int:
     sys.path.insert(0, str(repo / "hy3dshape"))
 
     import torch
-    from PIL import Image
     from hy3dshape import Hunyuan3DDiTFlowMatchingPipeline
     from hy3dshape.rembg import BackgroundRemover
+    from PIL import Image
 
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is unavailable in Hunyuan backend environment")

@@ -14,7 +14,7 @@ from .backends import backend_status
 from .config import ConfigError, load_config
 from .executor import JobManager
 from .gpu import GPUError, get_configured_gpu
-from .models import JobRequest, TERMINAL_STATUSES
+from .models import TERMINAL_STATUSES, JobRequest
 from .service import create_app
 
 

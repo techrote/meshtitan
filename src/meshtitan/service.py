@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Annotated
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
@@ -51,7 +52,7 @@ def create_app(config: RuntimeConfig) -> FastAPI:
         )
 
     @app.post("/v1/assets", response_model=AssetRecord)
-    async def upload_asset(file: UploadFile = File(...)) -> AssetRecord:
+    async def upload_asset(file: Annotated[UploadFile, File(...)]) -> AssetRecord:
         data = await file.read(config.max_upload_bytes + 1)
         if len(data) > config.max_upload_bytes:
             raise HTTPException(status_code=413, detail=f"asset exceeds {config.max_upload_mib} MiB limit")

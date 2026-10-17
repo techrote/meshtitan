@@ -8,7 +8,6 @@ import threading
 from pathlib import Path
 from typing import Any
 
-
 _FIELDS = [
     "timestamp",
     "index",

@@ -3,8 +3,8 @@ from __future__ import annotations
 import csv
 import io
 import subprocess
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 from .config import GPUConfig
 

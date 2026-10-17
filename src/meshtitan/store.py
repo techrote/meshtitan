@@ -6,7 +6,7 @@ import threading
 import uuid
 from pathlib import Path
 
-from .models import JobRecord, JobRequest, JobStatus, TERMINAL_STATUSES, utcnow
+from .models import TERMINAL_STATUSES, JobRecord, JobRequest, JobStatus, utcnow
 
 
 class JobStoreError(ValueError):
