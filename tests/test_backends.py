@@ -53,3 +53,10 @@ def test_unknown_parameter_fails_closed(tmp_path: Path):
     )
     with pytest.raises(BackendError):
         build_invocation(cfg, tmp_path / "x.png", tmp_path, "glb", {"mystery": 1})
+
+
+def test_triposr_runner_disables_vertex_colours():
+    runner = Path(__file__).resolve().parents[1] / "src" / "meshtitan" / "runners" / "triposr.py"
+    source = runner.read_text(encoding="utf-8")
+    assert "has_vertex_color=False" in source
+    assert '"vertex_colors": False' in source

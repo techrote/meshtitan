@@ -47,8 +47,9 @@ Default job parameters:
 | `remove_background` | true | upstream rembg path |
 | `foreground_ratio` | 0.85 | object framing after background removal |
 
-Texture baking and rendered video output are intentionally omitted. The mesh uses TripoSR's normal geometry
-extraction path.
+Texture baking, rendered video and vertex-colour extraction are intentionally omitted. MeshTitan calls upstream
+`extract_mesh(..., has_vertex_color=False)` so the geometry-only path does not perform the additional per-vertex
+colour query.
 
 ## Output formats
 
@@ -72,5 +73,7 @@ Successful jobs include:
 - NVML/nvidia-smi telemetry summary;
 - physical GPU identity and driver;
 - exact upstream Git commit configured for the backend.
+
+TripoSR results explicitly record `vertex_colors: false` in their parameter provenance.
 
 A successful process exit is insufficient if the mesh artifact is missing or empty.
