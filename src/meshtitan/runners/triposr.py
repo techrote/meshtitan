@@ -17,8 +17,15 @@ def main() -> int:
     parser.add_argument("--chunk-size", type=int, default=8192)
     parser.add_argument("--mc-resolution", type=int, default=256)
     parser.add_argument("--foreground-ratio", type=float, default=0.85)
+    parser.add_argument("--density-threshold", type=float, default=25.0)
+    parser.add_argument("--background-gray", type=float, default=0.5)
+    parser.add_argument("--experimental-resolution", action="store_true")
     parser.add_argument("--remove-background", action="store_true")
     args = parser.parse_args()
+    if not 16 <= args.mc_resolution <= 1024:
+        parser.error("mesh resolution must be between 16 and 1024")
+    if not 64 <= args.mc_resolution <= 512 and not args.experimental_resolution:
+        parser.error("resolutions outside 64–512 require --experimental-resolution")
 
     repo = Path(args.repo).resolve()
     sys.path.insert(0, str(repo))
@@ -38,6 +45,7 @@ def main() -> int:
             "the broker must pin CUDA_VISIBLE_DEVICES"
         )
 
+    torch.cuda.set_device(0)
     torch.cuda.reset_peak_memory_stats(0)
     t0 = time.perf_counter()
     model = TSR.from_pretrained(args.model, config_name="config.yaml", weight_name="model.ckpt")
@@ -53,7 +61,7 @@ def main() -> int:
         rgba = remove_background(image, session)
         rgba = resize_foreground(rgba, args.foreground_ratio)
         array = np.array(rgba).astype(np.float32) / 255.0
-        rgb = array[:, :, :3] * array[:, :, 3:4] + (1 - array[:, :, 3:4]) * 0.5
+        rgb = array[:, :, :3] * array[:, :, 3:4] + (1 - array[:, :, 3:4]) * args.background_gray
         image = Image.fromarray((rgb * 255.0).astype(np.uint8))
         preprocess_s = time.perf_counter() - t_pre
 
@@ -67,6 +75,7 @@ def main() -> int:
         scene_codes,
         has_vertex_color=False,
         resolution=args.mc_resolution,
+        threshold=args.density_threshold,
     )
     extraction_s = time.perf_counter() - t2
     if not meshes:
@@ -77,6 +86,8 @@ def main() -> int:
     output.parent.mkdir(parents=True, exist_ok=True)
     t3 = time.perf_counter()
     mesh.export(output)
+    if output.suffix.lower() != ".glb":
+        mesh.export(output.with_suffix(".glb"))
     export_s = time.perf_counter() - t3
 
     result = {
@@ -100,6 +111,9 @@ def main() -> int:
             "mc_resolution": args.mc_resolution,
             "remove_background": args.remove_background,
             "foreground_ratio": args.foreground_ratio,
+            "density_threshold": args.density_threshold,
+            "background_gray": args.background_gray,
+            "experimental_resolution": args.experimental_resolution,
             "vertex_colors": False,
         },
     }

@@ -1,0 +1,21 @@
+# Shape inference only. Deliberately excludes Paint, training, FlashAttention and SageAttention.
+# Install torch 2.5.1+cu124 and torchvision 0.20.1+cu124 separately first.
+numpy==1.26.4
+diffusers==0.30.3
+transformers==4.37.2
+accelerate==1.1.1
+huggingface-hub==0.36.0
+einops==0.8.1
+omegaconf==2.3.0
+Pillow==11.3.0
+opencv-python-headless==4.10.0.84
+trimesh==4.4.7
+pymeshlab==2022.2.post3
+scikit-image==0.24.0
+timm==1.0.22
+safetensors==0.7.0
+rembg==2.0.61
+onnxruntime==1.23.2
+typeguard==4.3.0
+tqdm==4.67.1
+PyYAML==6.0.3

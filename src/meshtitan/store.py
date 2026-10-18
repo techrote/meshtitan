@@ -24,7 +24,7 @@ class JobStore:
             raise JobStoreError("invalid job id")
         return self.root / job_id
 
-    def create(self, request: JobRequest) -> JobRecord:
+    def create(self, request: JobRequest, **metadata) -> JobRecord:
         with self._lock:
             job_id = uuid.uuid4().hex
             record = JobRecord(
@@ -33,6 +33,9 @@ class JobStore:
                 asset_id=request.asset_id,
                 output_format=request.output_format,
                 parameters=request.parameters,
+                view_assets=request.view_assets,
+                parent_job_id=request.parent_job_id,
+                **metadata,
             )
             self.job_dir(job_id).mkdir(parents=True, exist_ok=False)
             self._write(record)
@@ -49,6 +52,18 @@ class JobStore:
         with self._lock:
             self._write(record)
             return record
+
+    def recent(self, limit: int = 30) -> list[JobRecord]:
+        with self._lock:
+            paths = sorted(self.root.glob("*/job.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+            records = [self.get(path.parent.name) for path in paths]
+            return sorted(records, key=lambda record: record.created_at, reverse=True)[:limit]
+
+    def batch(self, batch_id: str) -> list[JobRecord]:
+        return sorted(
+            (record for record in self.recent(1_000_000) if record.batch_id == batch_id),
+            key=lambda record: record.batch_index or 0,
+        )
 
     def _write(self, record: JobRecord) -> None:
         directory = self.job_dir(record.job_id)

@@ -1,0 +1,115 @@
+{
+  "checkpoint_date_local": "2026-10-18",
+  "timezone": "Europe/London",
+  "scope": "Selected real TITAN RTX observations; MT-004 remains pending.",
+  "source_images": "Tencent-Hunyuan/Hunyuan3D-2 assets/example_mv_images/1 at the recorded source pin.",
+  "software_checks": {
+    "python_tests": 33,
+    "javascript_tests": 5,
+    "compileall": "passed",
+    "ruff": "passed"
+  },
+  "limitations": [
+    "Individual runs, not repeated comparative benchmarks.",
+    "PyTorch peak allocation excludes other GPU memory consumers.",
+    "Meshes have consistent winding but are not watertight.",
+    "Complete logs and meshes remain local under ignored var/."
+  ],
+  "observations": [
+    {
+      "job_id": "08e9aee3802c402abeef4d0564acbee3",
+      "backend": "hunyuan_multiview",
+      "parameters": {
+        "steps": 30,
+        "guidance_scale": 5,
+        "seed": 1234,
+        "octree_resolution": 256,
+        "num_chunks": 8000,
+        "remove_background": true,
+        "cpu_offload": true,
+        "box_v": 1.01,
+        "mc_level": 0,
+        "border_ratio": 0.15,
+        "experimental_resolution": false
+      },
+      "faces": 281900,
+      "vertices": 140945,
+      "watertight": false,
+      "winding_consistent": true,
+      "wall_seconds": 76.81299999999987,
+      "peak_allocated_mib": 2810.48828125,
+      "peak_reserved_mib": 3244.0,
+      "gpu": "NVIDIA TITAN RTX",
+      "created_at": "2026-10-17T23:25:34.198509Z",
+      "upstream_commit": "f8db63096c8282cb27354314d896feba5ba6ff8a",
+      "model_revision": "3a761b539b29fe4ff64714813aa9560fd66f5de0",
+      "torch_version": "2.5.1+cu124",
+      "cuda_runtime": "12.4",
+      "driver_version": "581.80",
+      "primary_image_sha256": "d3c6349c9aa12c7bdebefad374f8fbf661600c6d58db87ecc86112e1a7e25453",
+      "view_image_sha256": {
+        "front": "d3c6349c9aa12c7bdebefad374f8fbf661600c6d58db87ecc86112e1a7e25453",
+        "left": "e8fc9376631b3244fe048b3d51caf39ff72d1ad6fb951dbbf31fb4958466a229",
+        "back": "20c1c2b3afd1faa5877b0d26f6be88a304faf0703e580f3f7d61b4a78ce794b3"
+      }
+    },
+    {
+      "job_id": "700bad2de67241a89c5a983a066b165d",
+      "backend": "ultrashape",
+      "parameters": {
+        "steps": 30,
+        "guidance_scale": 5.0,
+        "seed": 1234,
+        "octree_resolution": 256,
+        "num_chunks": 2048,
+        "num_latents": 8192,
+        "normalize_scale": 0.99,
+        "remove_background": true,
+        "cpu_offload": true,
+        "experimental_resolution": false
+      },
+      "faces": 380235,
+      "vertices": 202081,
+      "watertight": false,
+      "winding_consistent": true,
+      "wall_seconds": 104.875,
+      "peak_allocated_mib": 7920.3359375,
+      "peak_reserved_mib": 8652.0,
+      "gpu": "NVIDIA TITAN RTX",
+      "created_at": "2026-10-17T23:28:50.123640Z",
+      "upstream_commit": "5e8dcef05df101ab00ab6cd5fdd0ed0c74fbca66",
+      "model_revision": "5aeb21a7185d39f042d02b2695802f125a6f5159",
+      "torch_version": "2.5.1+cu124",
+      "cuda_runtime": "12.4",
+      "driver_version": "581.80",
+      "primary_image_sha256": "d3c6349c9aa12c7bdebefad374f8fbf661600c6d58db87ecc86112e1a7e25453",
+      "view_image_sha256": {},
+      "parent_mesh_sha256": "55a54a06cdde2674e3e9c1f5c118c6faa0c93f898d5ade1aa3569ed8483757b8",
+      "checkpoint_sha256": "c96ae010c4169597fd0006dcb08056bf6104a1fca249b10fed7ddded324c3f0f",
+      "conditioning_config_revision": "47b73eefe95e8d44ec3623f8890bd894b6ea2d6c",
+      "compatibility": {
+        "profile": "titan-sm75-fp16-sdpa-cpu-mc-v1",
+        "source_hash_encoding": "UTF-8 with LF line endings",
+        "files": {
+          "surface_loaders.py": {
+            "original_sha256": "f8f75d089b8c406d0b47b0c60eca79a18d3aa65667b5bb4b796955e9fe326122",
+            "adapted_sha256": "e2ffdb749fd5152d669bbc669ce4491cf4b15ecd61947ff7b39a5c06062a5589"
+          },
+          "models/autoencoders/__init__.py": {
+            "original_sha256": "a84a34f6d14a75341805656725cc1ae6adbd8ae5c65da837fe04f5c2d917402f",
+            "adapted_sha256": "3a8d6ef2e3c9673dbeb77796956078c972d61c4ac025bfd1cc8459abcce2d714"
+          },
+          "models/denoisers/dit_mask.py": {
+            "original_sha256": "4cb94699a54b4410410972bdbfdb34e5103bd83f57b017a13e59eeac9dab68a1",
+            "adapted_sha256": "cc456a0affd4463e307df90bc72832228a59d63d7e52d9868b64e10ebfffb468"
+          },
+          "models/autoencoders/surface_extractors.py": {
+            "original_sha256": "811fca0e27d75245c8a257b2c11654751d6366c0849651ca23491401f84bc69c",
+            "adapted_sha256": "ee39b4088a7956b1e45b37fac865649e993a5f288cac063551984245a628c37e"
+          }
+        },
+        "adapter_sha256": "18943ef6171551562a506c89806d1d937a52d64589f7d88379670a6eb746cf8e"
+      }
+    }
+  ]
+}

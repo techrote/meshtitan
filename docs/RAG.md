@@ -10,6 +10,8 @@ Current target backends:
 
 1. Hunyuan3D 2.1 **shape only**
 2. TripoSR **geometry only**
+3. Hunyuan3D-2mv **multi-view shape only**, isolated `.venv-hunyuan-mv`
+4. UltraShape **geometry refinement only**, isolated `.venv-ultrashape`
 
 Texture painting/PBR generation is deliberately excluded. Future height/normal/displacement baking should consume
 the generated high-detail mesh as a separate deterministic mesh-processing stage.
@@ -24,6 +26,13 @@ Upstream pins:
 
 - Hunyuan3D 2.1: `82920d643c0dc2f7bfd7255f45f62d386edfe60c`
 - TripoSR: `107cefdc244c39106fa830359024f6a2f1c78871`
+- Hunyuan3D-2 (2mv): `f8db63096c8282cb27354314d896feba5ba6ff8a`
+- UltraShape-1.0: `5e8dcef05df101ab00ab6cd5fdd0ed0c74fbca66`
+
+Primary model revisions and TITAN adaptations are documented in `docs/WINDOWS.md`.
+New inference dependencies use `requirements-inference.txt`. `windows.bat setup|run|doctor` is the
+Windows entry point. Multi-view inputs and refinement parent links are durable job fields;
+UltraShape compatibility source is retained with each job, leaving pinned vendor sources intact.
 
 ## Design invariants
 

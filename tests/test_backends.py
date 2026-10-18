@@ -40,6 +40,21 @@ def test_hunyuan_invocation_contains_geometry_controls(tmp_path: Path):
     assert invocation.output_path.name == "mesh.glb"
 
 
+def test_experimental_resolution_and_triposr_controls_reach_runner(tmp_path: Path):
+    repo = tmp_path / "triposr"
+    repo.mkdir()
+    cfg = BackendConfig("triposr", True, make_python(tmp_path), repo, "abc", {})
+    invocation = build_invocation(cfg, tmp_path / "image.png", tmp_path / "job", "glb", {
+        "mc_resolution": 32, "experimental_resolution": True,
+        "density_threshold": 20.5, "background_gray": 0.6,
+    })
+    command = " ".join(invocation.command)
+    assert "--mc-resolution 32" in command
+    assert "--experimental-resolution" in invocation.command
+    assert "--density-threshold 20.5" in command
+    assert "--background-gray 0.6" in command
+
+
 def test_unknown_parameter_fails_closed(tmp_path: Path):
     repo = tmp_path / "triposr"
     repo.mkdir()

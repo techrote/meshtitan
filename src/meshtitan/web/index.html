@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#10151b" />
+    <title>MeshTitan Studio</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23dfb77d' d='M16 2 30 10v12L16 30 2 22V10zm0 4L6 12l10 6 10-6zm-11 9v5l9 5v-5zm22 0-9 5v5l9-5z'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script type="importmap">
+      { "imports": { "three": "/static/vendor/three.module.min.js" } }
+    </script>
+    <script type="module" src="/static/app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/"
+        ><span class="brand-mark">◇</span> MeshTitan
+        <span class="tag">STUDIO</span></a
+      ><span class="device" id="device">Connecting…</span
+      ><a class="api-link" href="/docs" target="_blank" rel="noopener">API ↗</a>
+    </header>
+    <main>
+      <aside class="sidebar">
+        <div class="intro">
+          <span class="eyebrow">CREATE SOMETHING DIMENSIONAL</span>
+          <h1>Image to mesh</h1>
+          <p>Your images, your models, your GPU.</p>
+        </div>
+        <form id="generate-form">
+          <section>
+            <h2>
+              <span class="step">01</span> Input images
+              <span class="count" id="input-count">0</span>
+            </h2>
+            <label>Input mode<select id="input-mode">
+              <option value="batch">Independent images / batch</option>
+              <option value="multiview">Multi-view · one object</option>
+            </select></label>
+            <p class="hint" id="view-hint" hidden>Import 2–4 views of the same object. Assign front, left, back or right below. Front is required; each direction may appear once. Hunyuan Multi-view uses the Hunyuan settings below.</p>
+            <label class="dropzone" id="dropzone" for="image-file"
+              ><input
+                id="image-file"
+                type="file"
+                multiple
+                accept=".png,.jpg,.jpeg,.webp"
+                aria-label="Import images"
+              /><span
+                ><span class="upload-icon">＋</span
+                ><strong>Drop images or click to import</strong
+                ><span>Multiple images welcome</span></span
+              ></label
+            >
+            <div class="input-actions">
+              <span id="image-caption" class="hint"
+                >PNG, JPG or WebP · 32 MB each</span
+              ><button type="button" id="clear-inputs" class="text-button">
+                Clear
+              </button>
+            </div>
+            <div id="input-images" class="input-images"></div>
+          </section>
+          <section>
+            <h2><span class="step">02</span> Generation settings</h2>
+            <div class="param-grid global-settings">
+              <label class="full"
+                >Batch name<input
+                  id="batch-name"
+                  placeholder="e.g. Product studies"
+                  maxlength="100" /></label
+              ><label
+                >Preset<select id="preset">
+                  <option value="custom">Custom</option>
+                  <option value="draft">Draft</option>
+                  <option value="balanced" selected>Balanced</option>
+                  <option value="detail">High detail</option>
+                </select></label
+              ><label
+                >Output format<select id="output-format">
+                  <option value="glb">GLB</option>
+                  <option value="obj">OBJ</option>
+                  <option value="ply">PLY</option>
+                  <option value="stl">STL</option>
+                </select></label
+              ><label
+                >Seed variations<input
+                  id="variations"
+                  type="number"
+                  value="1"
+                  min="1"
+                  max="8"
+                  required /></label
+              ><label
+                >Seed behavior<select id="seed-mode">
+                  <option value="increment">Increment</option>
+                  <option value="random">Random</option>
+                  <option value="fixed">Fixed</option>
+                </select></label
+              >
+            </div>
+            <p class="hint">
+              Variations apply to Hunyuan. TripoSR runs once per image.
+            </p>
+            <article class="backend" data-backend="hunyuan_shape">
+              <label class="backend-choice"
+                ><input
+                  id="select-hunyuan_shape"
+                  type="checkbox"
+                  checked
+                /><span
+                  ><strong>Hunyuan3D 2.1</strong
+                  ><small>Detailed shape generation</small></span
+                ><span class="model-symbol">H</span></label
+              >
+              <details open>
+                <summary>Shape & sampling</summary>
+                <fieldset id="params-hunyuan_shape">
+                  <div class="param-grid">
+                    <label
+                      >Sampling steps<input
+                        name="steps"
+                        type="number"
+                        value="30"
+                        min="1"
+                        max="100"
+                        required /></label
+                    ><label
+                      >Guidance scale<input
+                        name="guidance_scale"
+                        type="number"
+                        value="5"
+                        min="0"
+                        max="30"
+                        step="0.1"
+                        required
+                    /></label>
+                    <label
+                      >Octree resolution<input
+                        name="octree_resolution"
+                        type="number"
+                        value="256"
+                        min="16"
+                        max="1024"
+                        step="1"
+                        list="resolutions"
+                        required /></label
+                    ><label
+                      >Seed
+                      <button
+                        type="button"
+                        id="random-seed"
+                        class="dice"
+                        title="Randomize seed"
+                      >
+                        ⚄</button
+                      ><input
+                        name="seed"
+                        type="number"
+                        value="1234"
+                        min="0"
+                        max="4294967295"
+                        required
+                    /></label>
+                  </div>
+                  <label class="check-row"
+                    ><input
+                      type="checkbox"
+                      name="experimental_resolution"
+                    />Allow experimental resolutions (16–1024)</label
+                  >
+                  <p class="hint">
+                    Outside 64–512 requires this toggle. 768 / 1024 can exhaust
+                    RAM or VRAM; no automatic fallback.
+                  </p>
+                  <label class="check-row"
+                    ><input type="checkbox" id="guidance-sweep" />Sweep guidance
+                    strength</label
+                  >
+                  <div class="param-grid">
+                    <label
+                      >Guidance values<input
+                        id="guidance-count"
+                        type="number"
+                        min="1"
+                        max="16"
+                        value="3"
+                        required /></label
+                    ><label
+                      >Guidance increment<input
+                        id="guidance-step"
+                        type="number"
+                        min="-30"
+                        max="30"
+                        value="1"
+                        step="0.1"
+                        required
+                    /></label>
+                  </div>
+                  <p class="hint" id="guidance-summary">
+                    Each seed is held fixed across all guidance values.
+                  </p>
+                  <label class="check-row"
+                    ><input
+                      name="remove_background"
+                      type="checkbox"
+                      checked
+                    />Remove background</label
+                  >
+                  <details class="advanced">
+                    <summary>Advanced geometry & memory</summary>
+                    <div class="param-grid">
+                      <label
+                        >Decode chunk size<input
+                          name="num_chunks"
+                          type="number"
+                          value="8000"
+                          min="256"
+                          max="65536"
+                          required /></label
+                      ><label title="Half-width of the sampled 3D bounding box"
+                        >Bounds (half-width)<input
+                          name="box_v"
+                          type="number"
+                          value="1.01"
+                          min="0.5"
+                          max="2"
+                          step="0.01"
+                          required
+                      /></label>
+                      <label title="Marching-cubes surface threshold"
+                        >Surface threshold<input
+                          name="mc_level"
+                          type="number"
+                          value="0"
+                          min="-1"
+                          max="1"
+                          step="0.01"
+                          required /></label
+                      ><label title="Empty space around the foreground object"
+                        >Image border ratio<input
+                          name="border_ratio"
+                          type="number"
+                          value="0.15"
+                          min="0"
+                          max="0.5"
+                          step="0.01"
+                          required
+                      /></label>
+                    </div>
+                    <label class="check-row"
+                      ><input name="cpu_offload" type="checkbox" />CPU offload
+                      <span class="muted">(uses more RAM)</span></label
+                    >
+                  </details>
+                  <p class="hint">
+                    256 is the baseline. 384 / 512 are experimental.
+                  </p>
+                </fieldset>
+              </details>
+            </article>
+            <article class="backend" data-backend="triposr">
+              <label class="backend-choice"
+                ><input id="select-triposr" type="checkbox" checked /><span
+                  ><strong>TripoSR</strong
+                  ><small>Quick geometry generation</small></span
+                ><span class="model-symbol teal">T</span></label
+              >
+              <details>
+                <summary>Geometry & foreground</summary>
+                <fieldset id="params-triposr">
+                  <div class="param-grid">
+                    <label
+                      >Mesh resolution<input
+                        name="mc_resolution"
+                        type="number"
+                        value="256"
+                        min="16"
+                        max="1024"
+                        step="1"
+                        list="resolutions"
+                        required /></label
+                    ><label
+                      >Query chunk size<input
+                        name="chunk_size"
+                        type="number"
+                        value="8192"
+                        min="256"
+                        max="65536"
+                        required /></label
+                    ><label class="full"
+                      >Foreground ratio<input
+                        name="foreground_ratio"
+                        type="number"
+                        value="0.85"
+                        min="0.1"
+                        max="1"
+                        step="0.01"
+                        required
+                    /></label>
+                  </div>
+                  <label class="check-row"
+                    ><input
+                      type="checkbox"
+                      name="experimental_resolution"
+                    />Allow experimental resolutions (16–1024)</label
+                  >
+                  <p class="hint">
+                    Outside 64–512 requires this toggle. Higher grids can
+                    exhaust RAM or VRAM.
+                  </p>
+                  <div class="param-grid">
+                    <label title="Density level used to extract the surface"
+                      >Density threshold<input
+                        name="density_threshold"
+                        type="number"
+                        value="25"
+                        min="0"
+                        max="1000"
+                        step="0.1"
+                        required /></label
+                    ><label
+                      title="Background fill after foreground extraction: 0 black, 1 white"
+                      >Background gray<input
+                        name="background_gray"
+                        type="number"
+                        value="0.5"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        required
+                    /></label>
+                  </div>
+                  <p class="hint">
+                    Higher threshold generally thins the surface; lower values
+                    can fill gaps or add floaters. Background gray and
+                    foreground ratio apply when removal is on.
+                  </p>
+                  <label class="check-row"
+                    ><input
+                      name="remove_background"
+                      type="checkbox"
+                      checked
+                    />Remove background</label
+                  >
+                </fieldset>
+              </details>
+            </article>
+            <div class="settings-actions">
+              <button type="button" id="save-settings">Save preset</button
+              ><button type="button" id="reset-settings">Reset</button>
+            </div>
+          </section>
+          <div class="submit-area">
+            <button id="generate" type="submit" class="primary" disabled>
+              Generate
+            </button>
+            <p id="queue-estimate" class="hint">Add images to start a batch.</p>
+          </div>
+        </form>
+        <div id="notice" role="status" aria-live="polite" hidden></div>
+      </aside>
+      <section class="workspace">
+        <div class="workspace-heading">
+          <div>
+            <span class="eyebrow">YOUR CREATIVE WORKSPACE</span>
+            <h2>Generation gallery</h2>
+          </div>
+          <button type="button" id="refresh">Refresh ↻</button>
+        </div>
+        <div class="queue-bar" id="queue-bar" aria-live="polite">
+          <span><i class="status-dot"></i> Ready to create</span
+          ><span>One job at a time on your TITAN</span>
+        </div>
+        <div class="gallery-toolbar">
+          <div class="view-tabs" role="group" aria-label="Gallery view">
+            <button
+              type="button"
+              class="active"
+              id="tab-all"
+              aria-pressed="true"
+            >
+              All generations</button
+            ><button type="button" id="tab-queue" aria-pressed="false">
+              Queue <span id="queue-count">0</span>
+            </button>
+          </div>
+          <input
+            type="search"
+            id="search"
+            placeholder="Search batches, images, models…"
+            aria-label="Search generations"
+          /><select id="status-filter" aria-label="Filter by status">
+            <option value="all">All statuses</option>
+            <option value="succeeded">Completed</option>
+            <option value="running">Running</option>
+            <option value="queued">Queued</option>
+            <option value="failed">Failed</option>
+            <option value="cancelled">Cancelled</option></select
+          ><label class="density"
+            >Size
+            <input
+              type="range"
+              id="grid-size"
+              min="170"
+              max="340"
+              step="10"
+              value="230"
+              aria-label="Thumbnail size"
+          /></label>
+        </div>
+        <p id="history-empty" class="empty-gallery">
+          Your batches will appear here. Import images, choose your models, and
+          generate.
+        </p>
+        <div id="groups"></div>
+        <button type="button" id="load-more" hidden>
+          Load earlier batches
+        </button>
+      </section>
+    </main>
+    <dialog id="preview-dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow" id="preview-badge">MESH INSPECTOR</span>
+          <h2 id="preview-title">Mesh preview</h2>
+        </div>
+        <button id="close-preview" type="button" aria-label="Close preview">
+          ✕
+        </button>
+      </div>
+      <div class="viewport" id="viewport">
+        <div
+          id="canvas-host"
+          aria-label="Interactive 3D preview"
+          tabindex="0"
+        ></div>
+        <div class="viewer-overlay" id="viewer-message"></div>
+        <div class="viewer-toolbar">
+          <button type="button" id="fit-view">Fit view</button
+          ><label><input type="checkbox" id="wireframe" />Wireframe</label
+          ><label><input type="checkbox" id="auto-rotate" />Rotate</label
+          ><label
+            >Up
+            <select id="up-axis" aria-label="Mesh up axis">
+              <option value="y">Y</option>
+              <option value="z">Z</option>
+            </select></label
+          ><label
+            >Color
+            <input
+              id="mesh-color"
+              type="color"
+              value="#d2d7d4"
+              aria-label="Preview color"
+          /></label>
+        </div>
+        <p class="viewer-help">
+          Drag to orbit · Scroll to zoom · Right-drag to pan
+        </p>
+      </div>
+      <div class="mesh-info">
+        <p id="mesh-stats"></p>
+        <a id="preview-download" class="download">Download mesh ↓</a>
+      </div>
+      <div id="inspector-actions" class="inspector-actions"></div>
+      <details>
+        <summary>Parameters & run details</summary>
+        <pre id="inspector-details"></pre>
+      </details>
+    </dialog>
+    <datalist id="resolutions">
+      <option value="16"></option>
+      <option value="32"></option>
+      <option value="64"></option>
+      <option value="128"></option>
+      <option value="256"></option>
+      <option value="384"></option>
+      <option value="512"></option>
+      <option value="768"></option>
+      <option value="1024"></option>
+    </datalist>
+    <noscript>Enable JavaScript to use MeshTitan Studio.</noscript>
+  </body>
+</html>

@@ -24,3 +24,16 @@ jobs:
         run: ruff check src tests
       - name: Unit tests
         run: pytest -q
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check browser modules
+        run: |
+          node --check src/meshtitan/web/app.js
+          node --check src/meshtitan/web/viewer.js
+          node --test tests/test_batch_plan.mjs

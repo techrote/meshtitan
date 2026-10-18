@@ -29,6 +29,9 @@ meshtitan = "meshtitan.__main__:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+meshtitan = ["web/*", "web/vendor/*", "web/vendor/utils/*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"

@@ -26,3 +26,20 @@ python = ".venv-triposr"
 repo = ".vendor/TripoSR"
 commit = "107cefdc244c39106fa830359024f6a2f1c78871"
 model = "stabilityai/TripoSR"
+
+[backends.hunyuan_multiview]
+enabled = true
+python = ".venv-hunyuan-mv"
+repo = ".vendor/Hunyuan3D-2"
+commit = "f8db63096c8282cb27354314d896feba5ba6ff8a"
+model_path = "tencent/Hunyuan3D-2mv"
+subfolder = "hunyuan3d-dit-v2-mv"
+model_revision = "3a761b539b29fe4ff64714813aa9560fd66f5de0"
+
+[backends.ultrashape]
+enabled = true
+python = ".venv-ultrashape"
+repo = ".vendor/UltraShape-1.0"
+commit = "5e8dcef05df101ab00ab6cd5fdd0ed0c74fbca66"
+checkpoint = "../../var/models/UltraShape/ultrashape_v1.pt"
+model_revision = "5aeb21a7185d39f042d02b2695802f125a6f5159"
